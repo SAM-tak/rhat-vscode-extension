@@ -25,6 +25,9 @@
       "include": "#calls"
     },
     {
+      "include": "#variadic"
+    },
+    {
       "include": "#operators"
     },
     {
@@ -292,6 +295,10 @@
           "name": "entity.name.function.rhat"
         }
       ]
+    },
+    "variadic": {
+      "match": "\\.\\.\\.",
+      "name": "keyword.control.variadic.rhat"
     },
     "operators": {
       "patterns": [
