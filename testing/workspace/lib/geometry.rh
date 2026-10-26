@@ -1,9 +1,8 @@
-module^ lib.geometry
+module^lib.geometry
 
-public^ def^ Point {
-    self^{ x:i64^ = 0, y:i64^ = 0 }
-}
-
-public^ let^ squaredLength = f^ point:&Point {
-    point.x*point.x + point.y*point.y
+public^def^Point {
+    self^{ x:i64^= 0, y:i64^= 0 }
+    squaredLength = f^self^ {
+        self^.x * self^.x + self^.y * self^.y
+    }
 }

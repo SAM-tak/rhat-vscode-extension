@@ -1,27 +1,27 @@
-let^ geometry = import^ lib.geometry
-let^ random = import^ std.random
+let^geometry = import^lib.geometry
+let^random = import^std.random
 
 # Go to Definition on Point or squaredLength to open lib/geometry.rh.
-var^ point = geometry.Point{x=3, y=4}
-print(geometry.squaredLength(&point))
+var^point = geometry.Point{ x = 3, y = 4 }
+print(point.squaredLength())
 
 # Body-derived parameter inference is shown by the language server.
-let^ twice = f^ value {
-    let^ typed:i64^ = value
-    return^ typed*2
+let^twice = f^value {
+    let^typed:i64^ = value
+    return^typed * 2
 }
 print(twice(21))
 
-var^ values:i64^[>..] = [1, 2]
+var^values = grow^i64^[]
 values.push(3)
 print(values.len, values[2])
 
-let^ optional:geometry.Point|nil^ = point
-if^ optional? {
+let^optional:geometry.Point|nil^ = point
+if^optional? {
     print(optional.x)
 else^:
     print("missing point")
 }
 
-var^ rng = random.new(12345)
+var^rng = random.new(12345)
 print(rng.next())
