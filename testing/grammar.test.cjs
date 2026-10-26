@@ -73,6 +73,21 @@ test('nominal structs and errors keep declaration names distinct from fields', a
     assert.deepEqual(scoped(result, 'storage.type.rhat'), ['i64']);
 });
 
+test('hats separate declaration words and names without requiring spaces', async () => {
+    const scopes = result => result.filter(t => t.text.trim()).map(t => ({
+        text: t.text.trim(), scopes: t.scopes,
+    }));
+    for (const [compact, spaced] of [
+        ['let^name=1', 'let^ name=1'],
+        ['def^Point {self^{x:i64^}}', 'def^ Point {self^{x:i64^}}'],
+        ['errordef^Error {Bad}', 'errordef^ Error {Bad}'],
+        ['public^def^Point {}', 'public^ def^ Point {}'],
+        ['let^run=template^f^x {return^x}', 'let^ run=template^ f^ x {return^ x}'],
+    ]) {
+        assert.deepEqual(scopes(await tokens(compact)), scopes(await tokens(spaced)), compact);
+    }
+});
+
 test('nested comments span lines and do not leak keywords into source scopes', async () => {
     const result = await tokens('#[ outer\n#[ if^ i64^ ]#\n]#\nlet^x=1 # i64^');
     assert.deepEqual(scoped(result, 'storage.type.rhat'), []);

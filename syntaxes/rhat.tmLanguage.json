@@ -170,7 +170,7 @@
     "declarations": {
       "patterns": [
         {
-          "match": "(?<![\\p{L}\\p{N}_])(def|errordef)(\\^)([ \\t]+)([\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
+          "match": "(?<![\\p{L}\\p{N}_])(def|errordef)(\\^)([ \\t]*)([\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
           "captures": {
             "1": {
               "name": "keyword.other.declaration.rhat"
