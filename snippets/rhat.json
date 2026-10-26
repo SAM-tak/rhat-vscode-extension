@@ -1,0 +1,83 @@
+{
+  "Function": {
+    "prefix": "fn",
+    "body": [
+      "let^ ${1:name} = f^ ${2:x}:i64^ -> i64^ {",
+      "\t${0:x}",
+      "}"
+    ],
+    "description": "Declare a function"
+  },
+  "Procedure": {
+    "prefix": "proc",
+    "body": [
+      "let^ ${1:name} = p^ ${2:x}:i64^ {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare a procedure"
+  },
+  "Struct": {
+    "prefix": "struct",
+    "body": [
+      "def^ ${1:Name} {",
+      "\tself^{",
+      "\t\t${2:value}:i64^ = 0",
+      "\t}",
+      "}"
+    ],
+    "description": "Declare a nominal struct"
+  },
+  "If / else": {
+    "prefix": "ifelse",
+    "body": [
+      "if^ ${1:condition} {",
+      "\t$2",
+      "else^:",
+      "\t$0",
+      "}"
+    ],
+    "description": "Branch using R^ clause syntax"
+  },
+  "Counted loop": {
+    "prefix": "for",
+    "body": [
+      "for^ ${1:i} from^ ${2:0} to^ ${3:9} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Inclusive counted loop"
+  },
+  "While loop": {
+    "prefix": "repeat",
+    "body": [
+      "repeat^ while^ ${1:condition} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Repeat while a condition holds"
+  },
+  "Import": {
+    "prefix": "import",
+    "body": [
+      "import^ ${1:std.random}"
+    ],
+    "description": "Import a static module"
+  },
+  "Import alias": {
+    "prefix": "importas",
+    "body": [
+      "let^ ${1:random} = import^ ${2:std.random}"
+    ],
+    "description": "Import a module under an alias"
+  },
+  "Template": {
+    "prefix": "template",
+    "body": [
+      "let^ ${1:name} = template^f^ ${2:item} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare an explicitly specialized function"
+  }
+}

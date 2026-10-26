@@ -1,0 +1,365 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "R^",
+  "scopeName": "source.rhat",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#declarations"
+    },
+    {
+      "include": "#scope-specifiers"
+    },
+    {
+      "include": "#hat-identifiers"
+    },
+    {
+      "include": "#calls"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.rhat",
+          "begin": "#\\[",
+          "end": "\\]#",
+          "patterns": [
+            {
+              "include": "#comments"
+            }
+          ]
+        },
+        {
+          "name": "comment.line.number-sign.rhat",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "string-line": {
+      "name": "string.quoted.triple.rhat",
+      "match": "\"\"\".*$"
+    },
+    "string-escaped": {
+      "name": "string.quoted.double.rhat",
+      "begin": "\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.rhat"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.rhat"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\\\(n|r|t|0|\\\\|\"|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f]+\\}|\\n)",
+          "name": "constant.character.escape.rhat"
+        },
+        {
+          "match": "\\\\.",
+          "name": "invalid.illegal.escape.rhat"
+        }
+      ]
+    },
+    "string-raw": {
+      "name": "string.quoted.single.rhat",
+      "begin": "'",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.rhat"
+        }
+      },
+      "end": "'",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.rhat"
+        }
+      },
+      "patterns": [
+        {
+          "match": "''",
+          "name": "constant.character.escape.rhat"
+        }
+      ],
+      "applyEndPatternLast": true
+    },
+    "name-literal": {
+      "name": "variable.other.name-literal.rhat",
+      "begin": "`",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.rhat"
+        }
+      },
+      "end": "`|$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.rhat"
+        }
+      },
+      "patterns": [
+        {
+          "match": "``",
+          "name": "constant.character.escape.rhat"
+        }
+      ],
+      "applyEndPatternLast": true
+    },
+    "strings": {
+      "patterns": [
+        {
+          "include": "#string-line"
+        },
+        {
+          "include": "#string-escaped"
+        },
+        {
+          "include": "#string-raw"
+        },
+        {
+          "include": "#name-literal"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "(?<![\\p{L}\\p{N}_])0[xX][0-9A-Fa-f_]+\\b",
+          "name": "constant.numeric.hex.rhat"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])0[bB][01_]+\\b",
+          "name": "constant.numeric.binary.rhat"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])0[oO][0-7_]+\\b",
+          "name": "constant.numeric.octal.rhat"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])[0-9][0-9_]*\\.[0-9][0-9_]*(?:[eE][+-]?[0-9_]+)?\\b",
+          "name": "constant.numeric.float.rhat"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])[0-9][0-9_]*[eE][+-]?[0-9_]+\\b",
+          "name": "constant.numeric.float.rhat"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])[0-9][0-9_]*\\b",
+          "name": "constant.numeric.integer.rhat"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(def|errordef)(\\^)([ \\t]+)([\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.declaration.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            },
+            "4": {
+              "name": "entity.name.type.rhat"
+            }
+          }
+        }
+      ]
+    },
+    "scope-specifiers": {
+      "match": "\\$[\\$\\^]*(?:[\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
+      "name": "variable.language.scope.rhat"
+    },
+    "hat-identifiers": {
+      "patterns": [
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(if|else|elseif|elsif|elif|ei|el|for|when|other|from|to|downto|step|while|until|next|skip|continue|repeat|do|break|return|try|catch)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|module|import|public|private|template|override|abstract|mutable)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.declaration.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(bool|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|f8|f16|f32|f64|string|nil)(\\^(?!\\^))",
+          "captures": {
+            "1": {
+              "name": "storage.type.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(true|false)(\\^(?!\\^))",
+          "captures": {
+            "1": {
+              "name": "constant.language.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(and|or|fits|bitand|bitor|bitxor|bitshift|bitnot)(\\^(?!\\^))",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.word.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(this|self|it)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "variable.language.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(prolog|prologue|pre|premain|first|main|last|epilog|epilogue)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "support.function.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "([\\p{L}_][\\p{L}\\p{N}_]*)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        }
+      ]
+    },
+    "calls": {
+      "patterns": [
+        {
+          "match": "(?<![\\p{L}\\p{N}_.])(print|assert)(?=\\s*\\()",
+          "name": "support.function.builtin.rhat"
+        },
+        {
+          "match": "[\\p{L}_][\\p{L}\\p{N}_]*(?=\\s*\\()",
+          "name": "entity.name.function.rhat"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "match": "\\?(?::=|[+*/%\\-]=)",
+          "name": "keyword.operator.nil-assignment.rhat"
+        },
+        {
+          "match": "[+*/%\\-]=",
+          "name": "keyword.operator.assignment.compound.rhat"
+        },
+        {
+          "match": ":=",
+          "name": "keyword.operator.assignment.rhat"
+        },
+        {
+          "match": "->",
+          "name": "keyword.operator.type.result.rhat"
+        },
+        {
+          "match": "\\?\\?",
+          "name": "keyword.operator.nil-coalescing.rhat"
+        },
+        {
+          "match": "\\?\\.|\\?\\[|\\?",
+          "name": "keyword.operator.nil-propagation.rhat"
+        },
+        {
+          "match": "≠|!=|≦|≤|<=|≧|≥|>=|[=<>]",
+          "name": "keyword.operator.comparison.rhat"
+        },
+        {
+          "match": "\\|",
+          "name": "keyword.operator.type.union.rhat"
+        },
+        {
+          "match": "&",
+          "name": "keyword.operator.reference.rhat"
+        },
+        {
+          "match": "[+*/%\\-]",
+          "name": "keyword.operator.arithmetic.rhat"
+        },
+        {
+          "match": "!",
+          "name": "keyword.operator.logical.rhat"
+        },
+        {
+          "match": "\\.\\.",
+          "name": "keyword.operator.range.rhat"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.rhat"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "match": "[(){}\\[\\]]",
+          "name": "punctuation.bracket.rhat"
+        },
+        {
+          "match": "[,;:]",
+          "name": "punctuation.separator.rhat"
+        }
+      ]
+    }
+  }
+}

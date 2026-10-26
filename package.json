@@ -1,0 +1,182 @@
+{
+  "name": "rhat",
+  "displayName": "R^ (Rhat) Language Support",
+  "description": "Language support for R^, powered by the native rhatls language server.",
+  "version": "0.1.0",
+  "publisher": "SAMtak",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SAM-tak/rhat-vscode-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.91.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "R^",
+    "rhat",
+    "rhatls",
+    "language server"
+  ],
+  "main": "./dist/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Syntax highlighting is available. The native language server starts only in trusted workspaces."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "rhatls requires files on the local or remote extension host filesystem."
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "rhat",
+        "extensions": [
+          ".rh"
+        ],
+        "aliases": [
+          "R^",
+          "Rhat",
+          "rhat"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rhat",
+        "scopeName": "source.rhat",
+        "path": "./syntaxes/rhat.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "rhat.restartServer",
+        "title": "Restart Language Server",
+        "category": "R^"
+      },
+      {
+        "command": "rhat.stopServer",
+        "title": "Stop Language Server",
+        "category": "R^"
+      },
+      {
+        "command": "rhat.showOutput",
+        "title": "Show Language Server Output",
+        "category": "R^"
+      }
+    ],
+    "configuration": {
+      "title": "R^",
+      "properties": {
+        "rhat.serverPath": {
+          "type": "string",
+          "default": "",
+          "scope": "window",
+          "description": "Path or command for rhatls. When empty, uses a bundled server, a sibling rhat development build in the Extension Development Host, then PATH."
+        },
+        "rhat.stdlibPath": {
+          "type": "string",
+          "default": "",
+          "scope": "window",
+          "description": "Optional standard-library root containing std/random.rh. Empty lets rhatls locate its own standard library."
+        },
+        "rhat.modulePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "window",
+          "description": "Additional module search directories, relative to the first workspace folder or absolute. Supports ${workspaceFolder}, ${workspaceFolder:name} and ${env:NAME}."
+        },
+        "rhat.serverAutoRestart": {
+          "type": "boolean",
+          "default": true,
+          "scope": "window",
+          "description": "Restart the language server after an unexpected exit. Disable while rebuilding rhatls; use Stop Language Server before rebuilding and Restart Language Server afterwards."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "punctuation.definition.hat.rhat",
+            "settings": {
+              "foreground": "#88888899"
+            }
+          },
+          {
+            "scope": "keyword.operator.word.rhat",
+            "settings": {
+              "foreground": "#569BD2"
+            }
+          },
+          {
+            "scope": [
+              "keyword.operator.assignment.compound.rhat",
+              "keyword.operator.nil-assignment.rhat"
+            ],
+            "settings": {
+              "foreground": "#D7BA7D",
+              "fontStyle": "bold"
+            }
+          }
+        ]
+      }
+    },
+    "snippets": [
+      {
+        "language": "rhat",
+        "path": "./snippets/rhat.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build:release",
+    "check": "tsc -p . --noEmit",
+    "compile": "tsc -p . && npm run bundle && node scripts/notices.cjs",
+    "bundle": "node scripts/build.cjs",
+    "watch": "npm run bundle -- --watch",
+    "test": "npm run compile && node --test testing/*.test.cjs",
+    "test:server": "npm run compile && node scripts/check-server.cjs",
+    "package": "vsce package --githubBranch main --no-dependencies -o rhat.vsix",
+    "bundle:release": "node scripts/build.cjs --release",
+    "build:debug": "npm run compile",
+    "build:release": "tsc -p . && npm run bundle:release && node scripts/notices.cjs"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/vscode": "~1.91.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "~5.9.3",
+    "vscode-oniguruma": "^1.7.0",
+    "vscode-textmate": "^9.3.2",
+    "vscode-languageserver-protocol": "3.18.5"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@vscode/vsce-sign@2.1.0": false
+  },
+  "overrides": {
+    "@vscode/vsce": {
+      "@azure/identity": "4.13.0",
+      "@azure/msal-node": {
+        "uuid": "^11.1.1"
+      }
+    }
+  }
+}

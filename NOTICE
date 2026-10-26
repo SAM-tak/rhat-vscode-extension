@@ -1,0 +1,5 @@
+R^ VS Code Language Support
+
+Language configuration, TextMate grammar and language-client setup are adapted from
+L^ VS Code Language Support (https://github.com/SAM-tak/lhat-vscode-extension),
+licensed under the Apache License, Version 2.0.
