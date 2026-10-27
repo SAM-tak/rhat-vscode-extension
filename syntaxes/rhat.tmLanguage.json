@@ -206,7 +206,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|externC|externLLVM|includeC|exportC|dyn|module|import|public|private|template|override|abstract|mutable)(\\^+)",
+          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|externC|externLLVM|includeC|exportC|exportL|dyn|module|import|public|private|template|override|abstract|mutable)(\\^+)",
           "captures": {
             "1": {
               "name": "keyword.other.declaration.rhat"
