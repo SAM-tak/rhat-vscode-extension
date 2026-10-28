@@ -298,7 +298,7 @@
     },
     "variadic": {
       "match": "\\.\\.\\.",
-      "name": "keyword.control.variadic.rhat"
+      "name": "keyword.operator.spread.rhat"
     },
     "operators": {
       "patterns": [

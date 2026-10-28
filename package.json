@@ -116,6 +116,13 @@
             }
           },
           {
+            "scope": "keyword.operator.spread.rhat",
+            "settings": {
+              "foreground": "#C586C0",
+              "fontStyle": "bold"
+            }
+          },
+          {
             "scope": "keyword.operator.word.rhat",
             "settings": {
               "foreground": "#569BD2"
