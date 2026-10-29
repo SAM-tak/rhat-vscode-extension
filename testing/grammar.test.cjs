@@ -60,7 +60,7 @@ test('clauses, template literals, outer receivers and lexical selectors use R^ s
 });
 
 test('L^-only constructs are not advertised as R^ keywords or types', async () => {
-    const result = await tokens('require^ enum^ pack^ number^ any^ t^ error^ as^ yield^');
+    const result = await tokens('require^ pack^ number^ any^ t^ error^ as^ yield^');
     assert.deepEqual(scoped(result, 'storage.type.rhat'), []);
     assert.deepEqual(scoped(result, 'keyword.other.declaration.rhat'), []);
     assert.deepEqual(scoped(result, 'keyword.control.rhat'), []);
@@ -68,8 +68,8 @@ test('L^-only constructs are not advertised as R^ keywords or types', async () =
 });
 
 test('nominal structs and errors keep declaration names distinct from fields', async () => {
-    const result = await tokens('def^ Point {self^{value:i64^}} errordef^ Error {Bad}');
-    assert.deepEqual(scoped(result, 'entity.name.type.rhat'), ['Point','Error']);
+    const result = await tokens('def^ Point {self^{value:i64^}} errordef^ Error {Bad} enum^ Mode {A}');
+    assert.deepEqual(scoped(result, 'entity.name.type.rhat'), ['Point','Error','Mode']);
     assert.deepEqual(scoped(result, 'storage.type.rhat'), ['i64']);
 });
 
@@ -81,6 +81,7 @@ test('hats separate declaration words and names without requiring spaces', async
         ['let^name=1', 'let^ name=1'],
         ['def^Point {self^{x:i64^}}', 'def^ Point {self^{x:i64^}}'],
         ['errordef^Error {Bad}', 'errordef^ Error {Bad}'],
+        ['enum^Mode {A}', 'enum^ Mode {A}'],
         ['public^def^Point {}', 'public^ def^ Point {}'],
         ['let^run=template^f^x {return^x}', 'let^ run=template^ f^ x {return^ x}'],
     ]) {

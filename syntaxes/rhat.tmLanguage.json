@@ -173,7 +173,7 @@
     "declarations": {
       "patterns": [
         {
-          "match": "(?<![\\p{L}\\p{N}_])(def|errordef)(\\^)([ \\t]*)([\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
+          "match": "(?<![\\p{L}\\p{N}_])(def|errordef|enum)(\\^)([ \\t]*)([\\p{L}_][\\p{L}\\p{N}_]*|`(?:``|[^`\\r\\n])+`)",
           "captures": {
             "1": {
               "name": "keyword.other.declaration.rhat"
@@ -206,7 +206,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|externC|externLLVM|includeC|exportC|exportL|dyn|module|import|public|private|template|override|abstract|mutable)(\\^+)",
+          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|enum|externC|externLLVM|includeC|exportC|exportL|dyn|module|import|public|private|template|override|abstract|mutable)(\\^+)",
           "captures": {
             "1": {
               "name": "keyword.other.declaration.rhat"
