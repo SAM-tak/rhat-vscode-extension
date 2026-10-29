@@ -1,4 +1,4 @@
-// The editor delegates language semantics to rhatls over stdio.
+// The editor delegates language semantics to the rhat language server (rhat lsp) over stdio.
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import {
@@ -72,7 +72,7 @@ class ServerController {
             }
             await this.stopClient();
             if (!vscode.workspace.isTrusted) {
-                this.output.info('Syntax highlighting is active. Trust the workspace to start rhatls.');
+                this.output.info('Syntax highlighting is active. Trust the workspace to start the language server.');
                 return;
             }
             const settings = this.settings();
@@ -86,7 +86,7 @@ class ServerController {
                 development: this.context.extensionMode === vscode.ExtensionMode.Development,
                 folders, baseDirectory,
             });
-            this.output.info(`Starting rhatls (${launch.source}): ${launch.command}`);
+            this.output.info(`Starting the language server (${launch.source}): ${launch.command}`);
             const serverOptions: ServerOptions = {
                 command: launch.command,
                 args: launch.args,
@@ -110,14 +110,14 @@ class ServerController {
                 ...(!folders.length && baseDirectory ? [baseDirectory] : []),
             ]);
             await client.start();
-            this.output.info('rhatls is ready.');
+            this.output.info('The language server is ready.');
         }).catch(async (error: unknown) => {
             const reason = error instanceof Error ? error.message : String(error);
             this.output.error(reason);
             try { await this.stopClient(); } catch (stopError) { this.output.error(String(stopError)); }
             if (!this.disposed && generation === this.generation) {
                 void Promise.resolve(vscode.window.showErrorMessage(
-                    `Could not start rhatls: ${reason}. Set rhat.serverPath to the native language server.`,
+                    `Could not start the language server: ${reason}. Set rhat.serverPath to the native language server.`,
                     'Open Settings', 'Show Output',
                 )).then(async selection => {
                     if (selection === 'Open Settings') {

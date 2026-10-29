@@ -17,21 +17,23 @@ function fixture(t) {
     return { extensionPath, development: false, folders: [{ name: 'project', path: temporary }], environment: { TOOL_ROOT: temporary } };
 }
 const settings = (extra = {}) => ({ serverPath: '', stdlibPath: '', modulePaths: [], autoRestart: true, ...extra });
-const executable = process.platform === 'win32' ? 'rhatls.exe' : 'rhatls';
+const executable = process.platform === 'win32' ? 'rhat.exe' : 'rhat';
 function file(at) { fs.mkdirSync(path.dirname(at), { recursive: true }); fs.writeFileSync(at, 'test executable'); fs.chmodSync(at, 0o755); return at; }
 
 test('server discovery honors explicit, bundled, development and PATH precedence', t => {
     const context = fixture(t);
     assert.equal(resolveServer(settings(), context).source, 'path');
-    const development = file(path.join(context.extensionPath, '..', 'rhat', 'build', 'Debug', executable));
+    const built = file(path.join(context.extensionPath, '..', 'rhat', 'build', 'Debug', executable));
     assert.equal(resolveServer(settings(), context).source, 'path', 'production must not use sibling source checkouts');
     context.development = true;
-    assert.equal(resolveServer(settings(), context).command, path.normalize(development));
+    assert.equal(resolveServer(settings(), context).command, path.normalize(built));
+    const development = file(path.join(context.extensionPath, '..', 'rhat', '.rhat-ls', executable));
+    assert.equal(resolveServer(settings(), context).command, path.normalize(development), 'the copy beats the build directory');
     const bundled = file(path.join(context.extensionPath, 'bin', executable));
     assert.equal(resolveServer(settings(), context).command, bundled);
     const explicit = file(path.join(context.folders[0].path, 'tools with spaces', executable));
     assert.equal(resolveServer(settings({ serverPath: explicit }), context).command, explicit);
-    assert.equal(resolveServer(settings({ serverPath: 'custom-rhatls' }), context).command, 'custom-rhatls');
+    assert.equal(resolveServer(settings({ serverPath: 'custom-rhat' }), context).command, 'custom-rhat');
 });
 
 test('invalid configured binaries fail instead of silently selecting a different server', t => {
@@ -45,7 +47,7 @@ test('module and stdlib paths use structured arguments and expand workspace and 
     const context = fixture(t);
     const launch = resolveServer(settings({ modulePaths: ['modules', '${workspaceFolder}/modules', '${env:TOOL_ROOT}/other'], stdlibPath: '${workspaceFolder:project}/standard library' }), context);
     assert.deepEqual(launch.modulePaths, [path.join(context.folders[0].path, 'modules'), path.join(context.folders[0].path, 'other')]);
-    assert.deepEqual(launch.args, ['--stdio', '--stdlib', path.join(context.folders[0].path, 'standard library')]);
+    assert.deepEqual(launch.args, ['lsp', '--stdio', '--stdlib', path.join(context.folders[0].path, 'standard library')]);
     assert.equal(launch.cwd, context.folders[0].path);
     assert.equal(expandSetting('$(uninterpreted)', context), '$(uninterpreted)');
     assert.equal(expandSetting('~/tools', context), path.join(os.homedir(), 'tools'));

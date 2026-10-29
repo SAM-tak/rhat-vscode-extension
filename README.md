@@ -1,43 +1,44 @@
 # R^ (Rhat) Language Support
 
 R^ (`rhat`) 用の VS Code 拡張です。`.rh` の構文強調と言語設定を提供し、
-ネイティブ言語サーバー `rhatls` を stdio で起動します。
+ネイティブ言語サーバー（`rhat lsp`）を stdio で起動します。
 L^ の VS Code 拡張を参考に、R^ の構文とサーバーに合わせて構成しています。
 
 ## 機能
 
 - `.rh` の言語認識、構文強調、コメント操作、括弧・引用符の補完。
 - `def^`、`f^`、`p^`、`if^`、各種ループ、`import^` などのスニペット。
-- `rhatls` による診断、ホバー、補完、定義移動、参照検索、シグネチャヘルプ、Outline、semantic tokens。
+- `rhat lsp` による診断、ホバー、補完、定義移動、参照検索、シグネチャヘルプ、Outline、semantic tokens。
 - 未保存の編集、依存する `.rh` ファイルの変更通知。
 - サーバーの再起動・停止・ログ表示。設定やワークスペースフォルダーの変更時には再接続。
 
 UI の多言語化、ビジュアルエディター、LTON、L^ の VM 用デバッグアダプターは含めません。
-解析範囲と制限は `rhatls` に準じます。現在は開いた文書と import 依存が対象で、
+解析範囲と制限は `rhat lsp` に準じます。現在は開いた文書と import 依存が対象で、
 rename や整形を独自には実装していません。
 
 ## インストールと設定
 
 VS Code **1.91 以降**を使用してください。
 このプロジェクトで生成する通常の VSIX には、ネイティブサーバーを同梱しません。
-R^ 側で `rhatls` をビルドまたはインストールし、その実行ファイルを設定します。
+R^ 側で `rhat` をビルドまたはインストールし、その実行ファイルを設定します。言語サーバーは `rhat lsp` で、別の実行ファイルはありません。
+R^ のビルドは `rhat` を `.rhat-ls/` にもコピーするので、言語サーバーの実行中でもビルドできます（`rhat.serverPath` には `.rhat-ls` 側を指定します）。
 
 ```json
 {
-  "rhat.serverPath": "C:/Users/Owner/source/repos/rhat/build/Release/rhatls.exe"
+  "rhat.serverPath": "C:/Users/Owner/source/repos/rhat/.rhat-ls/rhat.exe"
 }
 ```
 
-`rhat.serverPath` が空の場合は、拡張内の `bin/rhatls(.exe)`、次に PATH を探索します。
-F5 の Extension Development Host では、その間に隣の `../rhat/build/Debug`、`Release`、
+`rhat.serverPath` が空の場合は、拡張内の `bin/rhat(.exe)`、次に PATH を探索します。
+F5 の Extension Development Host では、その間に隣の `../rhat/.rhat-ls`、次に `../rhat/build/Debug`、`Release`、
 単一構成の `build` も探索します。通常インストールでは、隣のソースリポジトリを自動探索しません。
-設定には実行ファイル名だけを渡し、`--stdio` などの引数を含めないでください。
+設定には実行ファイル名だけを渡し、`lsp` や `--stdio` などの引数を含めないでください。
 
 追加の設定例です。
 
 ```json
 {
-  "rhat.serverPath": "${workspaceFolder}/tools/rhatls.exe",
+  "rhat.serverPath": "${workspaceFolder}/tools/rhat.exe",
   "rhat.modulePaths": ["modules", "${workspaceFolder:shared}/lib"],
   "rhat.stdlibPath": "C:/tools/rhat/share/rhat/stdlib",
   "rhat.serverAutoRestart": false
@@ -65,7 +66,8 @@ Restricted Mode では構文強調を利用でき、ネイティブサーバー�
 - **R^: Stop Language Server** — サーバーを終了し、実行ファイルの再ビルドを可能にする。
 - **R^: Show Language Server Output** — 起動・エラー・サーバーログを表示。
 
-`rhatls.exe` の開発中は、ビルド前に Stop を実行し、ビルド後に Restart を実行してください。
+`.rhat-ls` のコピーを使っていれば、ビルド前に Stop を実行する必要はありません。ビルド後に Restart を実行すると、新しいコピーに切り替わります。
+コピーが使用中で更新できなかったときは、ビルドが警告を出すだけで失敗はしません。
 VS Code 自身や別のエディターが起動したサーバーは、この Stop コマンドの対象ではありません。
 
 ## 開発
@@ -79,10 +81,10 @@ npm run test:server
 ```
 
 `npm test` は型検査、バンドル生成、TextMate の実トークン化、パス解決、VS Code API 境界のテストを行います。
-`npm run test:server` は隣の `rhatls` を使う接続テストです。別のサーバーも指定できます。
+`npm run test:server` は隣の `rhat lsp` を使う接続テストです。別のサーバーも指定できます。
 
 ```powershell
-npm run test:server -- --server ../rhat/build/Release/rhatls.exe
+npm run test:server -- --server ../rhat/build/Release/rhat.exe
 ```
 
 接続テストにはコンパイラ側のビルドが必要です。
@@ -105,8 +107,8 @@ VS Code の **Run Build Task** からも、それぞれのビルドを選択で�
 `main.rh` を開くと、構文強調・診断・定義移動などを試せます。
 `npm run watch` は Debug バンドルを継続更新します。型検査は `npm run check` で行います。
 
-拡張のビルド構成と `rhatls` の構成は独立しています。
-Release のサーバーを使う場合は、`rhat.serverPath` に `../rhat/build/Release/rhatls.exe` の
+拡張のビルド構成と `rhat` の構成は独立しています。
+Release のサーバーを使う場合は、`rhat.serverPath` に `../rhat/build/Release/rhat.exe` の
 絶対パス、またはインストールした Release 版を指定してください。
 R^ 側のビルドは `cmake --build build --config Release`、または
 `./scripts/build.ps1 -Configuration Release` で行えます。
@@ -127,7 +129,7 @@ code --install-extension ./rhat.vsix --force
 
 ビルド時に `vscode-languageclient` と実行時依存を JavaScript にまとめるため、VSIX の利用時に npm は不要です。
 ライセンスは `LICENSE`、移植元の表示は `NOTICE`、同梱依存の表示は `THIRD_PARTY_NOTICES.md` に保持します。
-ネイティブサーバーを同梱する配布を行う場合は、`bin/rhatls(.exe)` に加え
+ネイティブサーバーを同梱する配布を行う場合は、`bin/rhat(.exe)` に加え
 `share/rhat/stdlib` とサーバーのライセンスを配置し、`vsce` の `--target` で対象プラットフォームを指定してください。
 
 R^ 独自の DAP は登録しません。将来のソースデバッグには、コンパイラのデバッグ情報出力と

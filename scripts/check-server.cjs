@@ -54,13 +54,13 @@ async function main() {
             capabilities: { general: { positionEncodings: ['utf-16'] } },
             initializationOptions: { modulePaths: launch.modulePaths },
         });
-        assert.equal(capabilities.serverInfo.name, 'rhatls');
+        assert.equal(capabilities.serverInfo.name, 'rhat');
         initialized = true;
         await connection.sendNotification('initialized', {});
-        const content = 'let^ math=import^ lib.math\nprint("😀",math.twice(21))\n';
+        const content = 'let^ math=import^ lib.math\nprint^("😀",math.twice(21))\n';
         await connection.sendNotification('textDocument/didOpen', { textDocument: { uri, languageId: 'rhat', version: 1, text: content } });
         assert.deepEqual(await checked(1), []);
-        const position = { line: 1, character: 'print("😀",math.'.length };
+        const position = { line: 1, character: 'print^("😀",math.'.length };
         const hover = await connection.sendRequest('textDocument/hover', { textDocument: { uri }, position });
         assert.match(hover.contents.value, /twice\(x:i64\^\)/);
         const definition = await connection.sendRequest('textDocument/definition', { textDocument: { uri }, position });
@@ -75,7 +75,7 @@ async function main() {
         await connection.sendNotification('exit');
         const [code] = await exited;
         assert.equal(code, 0); assert.equal(stderr, '');
-        console.log('PASS native rhatls: discovery, initialization, unsaved edits, UTF-16 hover, cross-module definition and shutdown');
+        console.log('PASS native rhat lsp: discovery, initialization, unsaved edits, UTF-16 hover, cross-module definition and shutdown');
     } finally {
         clearTimeout(watchdog);
         if (initialized) { child.kill(); }

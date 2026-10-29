@@ -90,7 +90,7 @@ function checkExecutable(command: string, restoreExecuteBit = false): string {
 
 /** Produce the exact stdio launch and initialization paths used by the client. */
 export function resolveServer(settings: ServerSettings, context: ResolutionContext): ServerLaunch {
-    const executable = process.platform === 'win32' ? 'rhatls.exe' : 'rhatls';
+    const executable = process.platform === 'win32' ? 'rhat.exe' : 'rhat';
     let command: string;
     let source: ServerLaunch['source'];
     if (settings.serverPath.trim()) {
@@ -101,9 +101,12 @@ export function resolveServer(settings: ServerSettings, context: ResolutionConte
         source = 'configured';
     } else {
         const bundled = path.join(context.extensionPath, 'bin', executable);
-        const build = path.resolve(context.extensionPath, '..', 'rhat', 'build');
+        // rhat's build copies the compiler to .rhat-ls, so that rebuilding does not
+        // fight a running server for the executable; the build directory is a fallback.
+        const checkout = path.resolve(context.extensionPath, '..', 'rhat');
         const candidates = context.development
-            ? ['Debug', 'Release', ''].map(config => path.join(build, config, executable))
+            ? [path.join(checkout, '.rhat-ls', executable),
+               ...['Debug', 'Release', ''].map(config => path.join(checkout, 'build', config, executable))]
             : [];
         const development = candidates.find(file => fs.existsSync(file));
         if (fs.existsSync(bundled)) {
@@ -125,7 +128,7 @@ export function resolveServer(settings: ServerSettings, context: ResolutionConte
         ? absoluteSetting(settings.stdlibPath, context) : undefined;
     return {
         command,
-        args: ['--stdio', ...(stdlibPath ? ['--stdlib', stdlibPath] : [])],
+        args: ['lsp', '--stdio', ...(stdlibPath ? ['--stdlib', stdlibPath] : [])],
         modulePaths,
         stdlibPath,
         cwd: context.folders[0]?.path ?? context.baseDirectory,

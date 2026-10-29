@@ -9,7 +9,7 @@ function event() {
     return { subscribe: callback => { listeners.add(callback); return { dispose: () => listeners.delete(callback) }; }, fire: value => { for (const callback of listeners) { callback(value); } } };
 }
 function harness() {
-    const settings = { serverPath: 'test-rhatls', stdlibPath: '', modulePaths: ['lib'], serverAutoRestart: true };
+    const settings = { serverPath: 'test-rhat', stdlibPath: '', modulePaths: ['lib'], serverAutoRestart: true };
     const configuration = event(), folders = event(), trust = event();
     const commands = new Map(), instances = [], watchers = [], notices = [], messages = [];
     const uri = file => ({ fsPath: file, scheme: 'file', toString: () => pathToFileURL(file).href });
@@ -68,8 +68,8 @@ test('the VS Code adapter configures stdio, forwards source changes and serializ
         await h.extension.activate(h.context);
         assert.equal(h.instances.length, 1);
         const client = h.instances[0];
-        assert.equal(client.server.command, 'test-rhatls');
-        assert.deepEqual(client.server.args, ['--stdio']);
+        assert.equal(client.server.command, 'test-rhat');
+        assert.deepEqual(client.server.args, ['lsp', '--stdio']);
         assert.equal(client.server.options.shell, false);
         assert.deepEqual(client.options.documentSelector, [{ scheme: 'file', language: 'rhat' }]);
         assert.deepEqual(client.options.initializationOptions.modulePaths, [path.join(h.workspace, 'lib')]);

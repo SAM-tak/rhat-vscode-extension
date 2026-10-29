@@ -1,7 +1,7 @@
 {
   "name": "rhat",
   "displayName": "R^ (Rhat) Language Support",
-  "description": "Language support for R^, powered by the native rhatls language server.",
+  "description": "Language support for R^, powered by the native rhat language server (rhat lsp).",
   "version": "0.1.0",
   "publisher": "SAMtak",
   "license": "Apache-2.0",
@@ -18,7 +18,6 @@
   "keywords": [
     "R^",
     "rhat",
-    "rhatls",
     "language server"
   ],
   "main": "./dist/extension.js",
@@ -32,7 +31,7 @@
     },
     "virtualWorkspaces": {
       "supported": false,
-      "description": "rhatls requires files on the local or remote extension host filesystem."
+      "description": "The language server requires files on the local or remote extension host filesystem."
     }
   },
   "contributes": {
@@ -81,13 +80,13 @@
           "type": "string",
           "default": "",
           "scope": "window",
-          "description": "Path or command for rhatls. When empty, uses a bundled server, a sibling rhat development build in the Extension Development Host, then PATH."
+          "description": "Path or command for rhat, which runs the language server as 'rhat lsp'. When empty, uses a bundled rhat, the sibling rhat checkout's .rhat-ls copy or build in the Extension Development Host, then PATH."
         },
         "rhat.stdlibPath": {
           "type": "string",
           "default": "",
           "scope": "window",
-          "description": "Optional standard-library root containing std/random.rh. Empty lets rhatls locate its own standard library."
+          "description": "Optional standard-library root containing std/random.rh. Empty lets rhat locate its own standard library."
         },
         "rhat.modulePaths": {
           "type": "array",
@@ -102,7 +101,7 @@
           "type": "boolean",
           "default": true,
           "scope": "window",
-          "description": "Restart the language server after an unexpected exit. Disable while rebuilding rhatls; use Stop Language Server before rebuilding and Restart Language Server afterwards."
+          "description": "Restart the language server after an unexpected exit. Disable while rebuilding rhat; use Stop Language Server before rebuilding and Restart Language Server afterwards."
         }
       }
     },
