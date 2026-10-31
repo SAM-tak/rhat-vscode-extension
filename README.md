@@ -1,27 +1,34 @@
 # R^ (Rhat) Language Support
 
-R^ (`rhat`) 用の VS Code 拡張です。`.rh` の構文強調と言語設定を提供し、
-ネイティブ言語サーバー（`rhat lsp`）を stdio で起動します。
-L^ の VS Code 拡張を参考に、R^ の構文とサーバーに合わせて構成しています。
+**English** | [日本語](README.ja.md)
 
-## 機能
+A VS Code extension for R^ (`rhat`). It provides syntax highlighting and language
+configuration for `.rh` files and starts the native language server (`rhat lsp`)
+over stdio. It is based on the L^ VS Code extension and adapted to R^ syntax and
+its server.
 
-- `.rh` の言語認識、構文強調、コメント操作、括弧・引用符の補完。
-- `def^`、`f^`、`p^`、`if^`、各種ループ、`import^` などのスニペット。
-- `rhat lsp` による診断、ホバー、補完、定義移動、参照検索、シグネチャヘルプ、Outline、semantic tokens。
-- 未保存の編集、依存する `.rh` ファイルの変更通知。
-- サーバーの再起動・停止・ログ表示。設定やワークスペースフォルダーの変更時には再接続。
+## Features
 
-UI の多言語化、ビジュアルエディター、LTON、L^ の VM 用デバッグアダプターは含めません。
-解析範囲と制限は `rhat lsp` に準じます。現在は開いた文書と import 依存が対象で、
-rename や整形を独自には実装していません。
+- Language recognition, syntax highlighting, comment commands, and automatic closing of brackets and quotes for `.rh` files.
+- Snippets for `def^`, `f^`, `p^`, `if^`, loops, `import^`, and more.
+- Diagnostics, hover, completion, go to definition, references, signature help, Outline, and semantic tokens through `rhat lsp`.
+- Notifications for unsaved edits and changes to dependent `.rh` files.
+- Commands to restart or stop the server and show its output. The extension reconnects when settings or workspace folders change.
 
-## インストールと設定
+UI localization, a visual editor, LTON, and the L^ VM debug adapter are not
+included. Analysis coverage and limitations follow `rhat lsp`: currently, open
+documents and their import dependencies are analyzed. The extension does not
+implement rename or formatting separately.
 
-VS Code **1.91 以降**を使用してください。
-このプロジェクトで生成する通常の VSIX には、ネイティブサーバーを同梱しません。
-R^ 側で `rhat` をビルドまたはインストールし、その実行ファイルを設定します。言語サーバーは `rhat lsp` で、別の実行ファイルはありません。
-R^ のビルドは `rhat` を `.rhat-ls/` にもコピーするので、言語サーバーの実行中でもビルドできます（`rhat.serverPath` には `.rhat-ls` 側を指定します）。
+## Installation and configuration
+
+Use VS Code **1.91 or later**. The standard VSIX produced by this project does
+not bundle the native server. Build or install `rhat` from the R^ project and
+configure its executable. The language server runs as `rhat lsp`; there is no
+separate server executable.
+
+The R^ build also copies `rhat` to `.rhat-ls/`, so you can build while the
+language server is running. Point `rhat.serverPath` to that copy:
 
 ```json
 {
@@ -29,12 +36,14 @@ R^ のビルドは `rhat` を `.rhat-ls/` にもコピーするので、言語�
 }
 ```
 
-`rhat.serverPath` が空の場合は、拡張内の `bin/rhat(.exe)`、次に PATH を探索します。
-F5 の Extension Development Host では、その間に隣の `../rhat/.rhat-ls`、次に `../rhat/build/Debug`、`Release`、
-単一構成の `build` も探索します。通常インストールでは、隣のソースリポジトリを自動探索しません。
-設定には実行ファイル名だけを渡し、`lsp` や `--stdio` などの引数を含めないでください。
+When `rhat.serverPath` is empty, the extension searches for `bin/rhat(.exe)`
+inside the extension, then on PATH. In the F5 Extension Development Host, it
+also searches the neighboring `../rhat/.rhat-ls`, then `../rhat/build/Debug`,
+`Release`, and the single-configuration `build` directory, before PATH. A normal
+installation does not automatically search a neighboring source repository.
+Specify only the executable, without arguments such as `lsp` or `--stdio`.
 
-追加の設定例です。
+Additional configuration example:
 
 ```json
 {
@@ -45,34 +54,36 @@ F5 の Extension Development Host では、その間に隣の `../rhat/.rhat-ls`
 }
 ```
 
-| 設定 | 内容 |
+| Setting | Description |
 | --- | --- |
-| `rhat.serverPath` | 実行ファイルのパス、または PATH 上のコマンド名。空なら自動探索。 |
-| `rhat.stdlibPath` | `std/random.rh` などが入った標準ライブラリのルート。空ならサーバーに任せる。 |
-| `rhat.modulePaths` | ユーザーモジュールの追加探索ディレクトリ。 |
-| `rhat.serverAutoRestart` | 異常終了後の自動再起動。既定は `true`。 |
+| `rhat.serverPath` | Executable path or command on PATH. Leave empty for automatic discovery. |
+| `rhat.stdlibPath` | Standard library root containing files such as `std/random.rh`. Leave empty to let the server find it. |
+| `rhat.modulePaths` | Additional search directories for user modules. |
+| `rhat.serverAutoRestart` | Restart the server after an unexpected exit. Defaults to `true`. |
 
-パスでは `${workspaceFolder}`、`${workspaceFolder:name}`、`${env:NAME}`、`~/` を使用できます。
-相対パスは最初のワークスペースフォルダーを基準にします。
-フォルダーなしでファイルだけを開いた場合は、そのファイルのディレクトリを基準にします。
-設定はウィンドウ単位で、一つのサーバーが全ワークスペースフォルダーを受け持ちます。
-リモート接続では拡張ホスト側にあるサーバーとパスを指定してください。
+Paths support `${workspaceFolder}`, `${workspaceFolder:name}`, `${env:NAME}`,
+and `~/`. Relative paths are resolved against the first workspace folder, or
+against the file's directory when a file is opened without a folder. Settings
+apply per window, and one server handles all workspace folders. For remote
+connections, specify a server and paths on the extension host.
 
-Restricted Mode では構文強調を利用でき、ネイティブサーバーはワークスペースを信頼した後に起動します。
+In Restricted Mode, syntax highlighting remains available. The native server
+starts after the workspace is trusted.
 
-## コマンド
+## Commands
 
-- **R^: Restart Language Server** — 設定を読み直して再接続。
-- **R^: Stop Language Server** — サーバーを終了し、実行ファイルの再ビルドを可能にする。
-- **R^: Show Language Server Output** — 起動・エラー・サーバーログを表示。
+- **R^: Restart Language Server** — reload settings and reconnect.
+- **R^: Stop Language Server** — stop the server so its executable can be rebuilt.
+- **R^: Show Language Server Output** — show startup messages, errors, and server logs.
 
-`.rhat-ls` のコピーを使っていれば、ビルド前に Stop を実行する必要はありません。ビルド後に Restart を実行すると、新しいコピーに切り替わります。
-コピーが使用中で更新できなかったときは、ビルドが警告を出すだけで失敗はしません。
-VS Code 自身や別のエディターが起動したサーバーは、この Stop コマンドの対象ではありません。
+When using the `.rhat-ls` copy, you do not need to stop the server before a
+build. Restart it afterward to use the new copy. If the copy is in use and
+cannot be updated, the build emits a warning but does not fail. The Stop command
+does not stop servers started by VS Code itself or another editor.
 
-## 開発
+## Development
 
-ビルドには **Node.js 22 以降**と npm が必要です。
+Building requires **Node.js 22 or later** and npm.
 
 ```powershell
 npm ci
@@ -80,16 +91,17 @@ npm test
 npm run test:server
 ```
 
-`npm test` は型検査、バンドル生成、TextMate の実トークン化、パス解決、VS Code API 境界のテストを行います。
-`npm run test:server` は隣の `rhat lsp` を使う接続テストです。別のサーバーも指定できます。
+`npm test` checks types, builds the bundle, and tests TextMate tokenization, path
+resolution, and the VS Code API boundary. `npm run test:server` tests the
+connection using the neighboring `rhat lsp`. You can specify another server:
 
 ```powershell
 npm run test:server -- --server ../rhat/build/Release/rhat.exe
 ```
 
-接続テストにはコンパイラ側のビルドが必要です。
-テストは一時ワークスペースを作り、JSON-RPC で未保存文書・依存モジュール・診断・UTF-16 座標・終了処理を検証します。
-VS Code の GUI を操作するテストではありません。
+The connection test requires a build of the compiler. It creates a temporary
+workspace and tests unsaved documents, dependent modules, diagnostics, UTF-16
+coordinates, and shutdown over JSON-RPC. It does not drive the VS Code GUI.
 
 ### Debug / Release
 
@@ -98,39 +110,40 @@ npm run build:debug
 npm run build:release
 ```
 
-Debug はソースマップ付き、Release は JavaScript を最小化し、配布用ソースマップを生成しません。
-どちらも `dist/extension.js` を生成します。
-VS Code の **Run Build Task** からも、それぞれのビルドを選択できます。
+Debug includes source maps. Release minifies JavaScript and does not generate
+source maps for distribution. Both produce `dist/extension.js`. You can also
+select either build from VS Code's **Run Build Task**.
 
-このフォルダーを VS Code で開いて **F5** を押すと、選択した Debug / Release 設定でビルドし、
-`testing/workspace` を開いた Extension Development Host を起動します。
-`main.rh` を開くと、構文強調・診断・定義移動などを試せます。
-`npm run watch` は Debug バンドルを継続更新します。型検査は `npm run check` で行います。
+Open this folder in VS Code and press **F5** to build with the selected Debug or
+Release configuration and launch an Extension Development Host with
+`testing/workspace` open. Open `main.rh` to try syntax highlighting, diagnostics,
+go to definition, and more. `npm run watch` continuously updates the Debug
+bundle; run `npm run check` for type checking.
 
-拡張のビルド構成と `rhat` の構成は独立しています。
-Release のサーバーを使う場合は、`rhat.serverPath` に `../rhat/build/Release/rhat.exe` の
-絶対パス、またはインストールした Release 版を指定してください。
-R^ 側のビルドは `cmake --build build --config Release`、または
-`./scripts/build.ps1 -Configuration Release` で行えます。
+The extension and `rhat` build configurations are independent. To use a Release
+server, set `rhat.serverPath` to the absolute path of
+`../rhat/build/Release/rhat.exe` or to an installed Release build. Build R^ with
+`cmake --build build --config Release` or
+`./scripts/build.ps1 -Configuration Release`.
 
-## VSIX の生成
+## Building a VSIX
 
 ```powershell
 npm run package
 ```
 
-VSIX 作成時は自動的に Release ビルドを実行します。
-生成物は `rhat.vsix` です。VS Code の **Extensions: Install from VSIX...** から選択できます。
-コマンドでもインストールできます。
+Packaging automatically runs a Release build and produces `rhat.vsix`. Select it
+using VS Code's **Extensions: Install from VSIX...** command, or install it
+from the command line:
 
 ```powershell
 code --install-extension ./rhat.vsix --force
 ```
 
-ビルド時に `vscode-languageclient` と実行時依存を JavaScript にまとめるため、VSIX の利用時に npm は不要です。
-ライセンスは `LICENSE`、移植元の表示は `NOTICE`、同梱依存の表示は `THIRD_PARTY_NOTICES.md` に保持します。
-ネイティブサーバーを同梱する配布を行う場合は、`bin/rhat(.exe)` に加え
-`share/rhat/stdlib` とサーバーのライセンスを配置し、`vsce` の `--target` で対象プラットフォームを指定してください。
+The build bundles `vscode-languageclient` and its runtime dependencies into
+JavaScript, so npm is not required to use the VSIX. Licensing information is in
+`LICENSE`, attribution for the original work is in `NOTICE`, and bundled
+dependency notices are in `THIRD_PARTY_NOTICES.md`.
 
-R^ 独自の DAP は登録しません。将来のソースデバッグには、コンパイラのデバッグ情報出力と
-既存のネイティブ用デバッグアダプターを組み合わせます。
+The extension does not register an R^-specific DAP. Future source debugging
+will combine compiler debug information with an existing native debug adapter.
