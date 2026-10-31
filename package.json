@@ -167,7 +167,7 @@
   "devDependencies": {
     "@types/node": "^20.19.0",
     "@types/vscode": "~1.91.0",
-    "@vscode/vsce": "^4.0.0",
+    "@vscode/vsce": "^4.1.0",
     "esbuild": "^0.28.2",
     "typescript": "~5.9.3",
     "vscode-oniguruma": "^1.7.0",
