@@ -125,3 +125,9 @@ test('numbers, array ranges, references and nil propagation do not inherit table
     assert.deepEqual(scoped(result, 'keyword.operator.assignment.compound.rhat'), ['+=']);
     assert.deepEqual(scoped(result, 'keyword.operator.nil-propagation.rhat'), ['?.','?[']);
 });
+
+test('array kinds and element reference modifiers stay inside brackets', async () => {
+    const result = await tokens('Node[grow^] Node[flex^] Node[slice^] Node[ref^max^10] ref^Node[ref^grow^] [grow^ 1,2]');
+    assert.deepEqual(scoped(result, 'storage.modifier.array.rhat'), ['grow','flex','slice','max','grow','grow']);
+    assert.deepEqual(scoped(result, 'keyword.other.rhat'), ['ref','ref','ref']);
+});
