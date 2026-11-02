@@ -26,6 +26,16 @@ async function tokens(source) {
 }
 const scoped = (tokens, scope) => tokens.filter(t => t.scopes.includes(scope)).map(t => t.text);
 
+test('cross and dot aliases retain operator scopes with or without whitespace', async () => {
+    for (const source of ['n.delta×(p-n.origin) 左⋅右', 'n.delta × (p-n.origin) 左 ⋅ 右']) {
+        const result = await tokens(source);
+        assert.deepEqual(scoped(result, 'keyword.operator.word.rhat'), ['×', '⋅']);
+        assert.deepEqual(scoped(result, 'entity.name.function.rhat'), []);
+    }
+    const result = await tokens('cross^ dot^ op^× op^⋅ "× ⋅" `×`');
+    assert.deepEqual(scoped(result, 'keyword.operator.word.rhat'), ['cross', 'dot', '×', '⋅']);
+});
+
 test('L^ color defaults dim hats and emphasize word operators and compound assignments', () => {
     const pkg = require('../package.json');
     const rules = pkg.contributes.configurationDefaults['editor.tokenColorCustomizations'].textMateRules;

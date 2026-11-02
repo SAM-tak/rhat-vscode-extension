@@ -239,7 +239,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(and|or|fits|bitand|bitor|bitxor|bitshift|bitnot)(\\^(?!\\^))",
+          "match": "(?<![\\p{L}\\p{N}_])(and|or|fits|cross|dot|bitand|bitor|bitxor|bitshift|bitnot)(\\^(?!\\^))",
           "captures": {
             "1": {
               "name": "keyword.operator.word.rhat"
@@ -302,6 +302,10 @@
     },
     "operators": {
       "patterns": [
+        {
+          "match": "×|⋅",
+          "name": "keyword.operator.word.rhat"
+        },
         {
           "match": "\\?(?::=|[+*/%\\-]=)",
           "name": "keyword.operator.nil-assignment.rhat"
