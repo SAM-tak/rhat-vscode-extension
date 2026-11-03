@@ -83,5 +83,17 @@
       "`",
       "`"
     ]
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^[^#]*([{(\\[]|:)\\s*(#.*)?$",
+    "decreaseIndentPattern": "^\\s*([})\\]]|elseif\\^|else\\^|other\\^)"
+  },
+  "onEnterRules": [
+    {
+      "beforeText": "^\\s*(elseif\\^.*|else\\^|el\\^|when\\^.*|other\\^|catch\\^.*):\\s*(#.*)?$",
+      "action": {
+        "indent": "indent"
+      }
+    }
   ]
 }
