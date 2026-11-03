@@ -217,7 +217,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(grow|flex|slice|max)(\\^(?!\\^))",
+          "match": "(?<![\\p{L}\\p{N}_])(grow|flex|max)(\\^(?!\\^))",
           "captures": {
             "1": {
               "name": "storage.modifier.array.rhat"
