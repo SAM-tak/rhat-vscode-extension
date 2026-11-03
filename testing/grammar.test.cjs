@@ -36,7 +36,7 @@ test('cross and dot aliases retain operator scopes with or without whitespace', 
     assert.deepEqual(scoped(result, 'keyword.operator.word.rhat'), ['cross', 'dot', '×', '⋅']);
 });
 
-test('L^ color defaults emphasize operators and hats use configurable opacity decorations', () => {
+test('R^ color defaults emphasize operators and hats use configurable opacity decorations', () => {
     const pkg = require('../package.json');
     const rules = pkg.contributes.configurationDefaults['editor.tokenColorCustomizations'].textMateRules;
     const settings = scope => rules.find(rule => [rule.scope].flat().includes(scope))?.settings;
