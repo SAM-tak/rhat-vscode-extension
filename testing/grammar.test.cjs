@@ -36,11 +36,12 @@ test('cross and dot aliases retain operator scopes with or without whitespace', 
     assert.deepEqual(scoped(result, 'keyword.operator.word.rhat'), ['cross', 'dot', '×', '⋅']);
 });
 
-test('L^ color defaults dim hats and emphasize word operators and compound assignments', () => {
+test('L^ color defaults emphasize operators and hats use configurable opacity decorations', () => {
     const pkg = require('../package.json');
     const rules = pkg.contributes.configurationDefaults['editor.tokenColorCustomizations'].textMateRules;
     const settings = scope => rules.find(rule => [rule.scope].flat().includes(scope))?.settings;
-    assert.deepEqual(settings('punctuation.definition.hat.rhat'), { foreground: '#88888899' });
+    assert.equal(settings('punctuation.definition.hat.rhat'), undefined);
+    assert.equal(pkg.contributes.configuration.properties['rhat.hatOpacity'].default, 0.5);
     assert.deepEqual(settings('keyword.operator.word.rhat'), { foreground: '#569BD2' });
     for (const scope of ['keyword.operator.assignment.compound.rhat', 'keyword.operator.nil-assignment.rhat']) {
         assert.deepEqual(settings(scope), { foreground: '#D7BA7D', fontStyle: 'bold' });

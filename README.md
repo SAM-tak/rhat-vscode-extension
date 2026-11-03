@@ -12,13 +12,30 @@ its server.
 - Language recognition, syntax highlighting, comment commands, and automatic closing of brackets and quotes for `.rh` files.
 - Snippets for `def^`, `f^`, `p^`, `if^`, loops, `import^`, and more.
 - Diagnostics, hover, completion, go to definition, references, signature help, Outline, and semantic tokens through `rhat lsp`.
+- Document formatting through the server, shared with `rhat format` and configured by `.editorconfig`.
 - Notifications for unsaved edits and changes to dependent `.rh` files.
 - Commands to restart or stop the server and show its output. The extension reconnects when settings or workspace folders change.
 
 UI localization, a visual editor, LTON, and the L^ VM debug adapter are not
 included. Analysis coverage and limitations follow `rhat lsp`: currently, open
 documents and their import dependencies are analyzed. The extension does not
-implement rename or formatting separately.
+implement rename separately. Formatting uses the server's standard LSP provider.
+
+Use **Format Document** (`Shift+Alt+F` on Windows) to format the current buffer.
+This extension is the default formatter for R^. To format on save, add:
+
+```json
+"[rhat]": {
+  "editor.defaultFormatter": "SAMtak.rhat",
+  "editor.formatOnSave": true
+}
+```
+
+The server reads EditorConfig indentation, line endings, final newline, and line
+length settings. R^-specific options are `rhat_brace_style = same_line | next_line`
+and `rhat_space_after_hat = false | true`. Invalid syntax produces no edits;
+comments, strings, and token spellings are preserved. A server with formatting
+support is required; restart it after updating `rhat`.
 
 ## Installation and configuration
 

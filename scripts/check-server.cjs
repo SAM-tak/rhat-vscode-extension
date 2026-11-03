@@ -47,6 +47,7 @@ async function main() {
         connection.listen();
         const uri = pathToFileURL(path.join(workspace, 'unsaved 日本語.rh')).href;
         fs.mkdirSync(path.join(workspace, 'lib'));
+        fs.writeFileSync(path.join(workspace, '.editorconfig'), 'root=true\n[*.rh]\nend_of_line=lf\n');
         fs.writeFileSync(path.join(workspace, 'lib', 'math.rh'), 'module^ lib.math\npublic^ let^ twice=f^ x:i64^ ->i64^ {x*2}\n');
         const capabilities = await connection.sendRequest('initialize', {
             processId: process.pid, rootUri: pathToFileURL(workspace).href,
@@ -55,14 +56,22 @@ async function main() {
             initializationOptions: { modulePaths: launch.modulePaths },
         });
         assert.equal(capabilities.serverInfo.name, 'rhat');
+        assert.equal(capabilities.capabilities.documentFormattingProvider, true);
         initialized = true;
         await connection.sendNotification('initialized', {});
         const content = 'let^ math=import^ lib.math\nprint^("😀",math.twice(21))\n';
         await connection.sendNotification('textDocument/didOpen', { textDocument: { uri, languageId: 'rhat', version: 1, text: content } });
         assert.deepEqual(await checked(1), []);
+        const edits = await connection.sendRequest('textDocument/formatting', {
+            textDocument: { uri }, options: { tabSize: 4, insertSpaces: true },
+        });
+        assert.equal(edits.length, 1);
+        assert.equal(edits[0].newText, 'let^math = import^lib.math\nprint^("😀", math.twice(21))\n');
+        assert.deepEqual(edits[0].range, { start: { line: 0, character: 0 }, end: { line: 2, character: 0 } });
+        assert.equal(fs.existsSync(path.join(workspace, 'unsaved 日本語.rh')), false);
         const position = { line: 1, character: 'print^("😀",math.'.length };
         const hover = await connection.sendRequest('textDocument/hover', { textDocument: { uri }, position });
-        assert.match(hover.contents.value, /twice\(x:i64\^\)/);
+        assert.match(hover.contents.value, /twice : f\^x:i64\^ -> i64\^/);
         const definition = await connection.sendRequest('textDocument/definition', { textDocument: { uri }, position });
         assert.equal(definition.uri.toLowerCase(), pathToFileURL(path.join(workspace, 'lib', 'math.rh')).href.toLowerCase());
         await connection.sendNotification('textDocument/didChange', { textDocument: { uri, version: 2 }, contentChanges: [{ text: content.replace('21', '"bad"') }] });
@@ -75,7 +84,7 @@ async function main() {
         await connection.sendNotification('exit');
         const [code] = await exited;
         assert.equal(code, 0); assert.equal(stderr, '');
-        console.log('PASS native rhat lsp: discovery, initialization, unsaved edits, UTF-16 hover, cross-module definition and shutdown');
+        console.log('PASS native rhat lsp: discovery, formatting, unsaved edits, UTF-16 hover, cross-module definition and shutdown');
     } finally {
         clearTimeout(watchdog);
         if (initialized) { child.kill(); }

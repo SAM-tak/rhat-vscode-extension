@@ -114,6 +114,9 @@
       }
     },
     "configurationDefaults": {
+      "[rhat]": {
+        "editor.defaultFormatter": "SAMtak.rhat"
+      },
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {

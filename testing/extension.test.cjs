@@ -25,6 +25,7 @@ function harness() {
             onDidChangeConfiguration: configuration.subscribe,
             onDidChangeWorkspaceFolders: folders.subscribe,
             onDidGrantWorkspaceTrust: trust.subscribe,
+            onDidChangeTextDocument: event().subscribe,
             createFileSystemWatcher: pattern => {
                 const create = event(), change = event(), remove = event();
                 const watcher = { pattern, create, change, remove, disposed: false, onDidCreate: create.subscribe, onDidChange: change.subscribe, onDidDelete: remove.subscribe, dispose() { this.disposed = true; } };
@@ -32,6 +33,9 @@ function harness() {
             },
         },
         window: {
+            visibleTextEditors: [],
+            createTextEditorDecorationType: () => ({ dispose() {} }),
+            onDidChangeVisibleTextEditors: event().subscribe,
             createOutputChannel: () => output,
             showErrorMessage: message => { notices.push(message); return new Promise(() => {}); },
         },
