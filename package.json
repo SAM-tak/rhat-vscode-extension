@@ -3,7 +3,7 @@
   "displayName": "R^ (Rhat) Language Support",
   "description": "Language support for R^, powered by the native rhat language server (rhat lsp).",
   "icon": "./images/rhat-logo.png",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "SAMtak",
   "license": "Apache-2.0",
   "repository": {
@@ -77,6 +77,13 @@
     "configuration": {
       "title": "R^",
       "properties": {
+        "rhat.hatOpacity": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Opacity of the '^' that ends a hat word, over the theme's colour for it. 1 leaves it as the theme draws it."
+        },
         "rhat.serverPath": {
           "type": "string",
           "default": "",
@@ -110,32 +117,40 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "scope": "punctuation.definition.hat.rhat",
-            "settings": {
-              "foreground": "#88888899"
-            }
-          },
-          {
-            "scope": "keyword.operator.spread.rhat",
+            "scope": [
+              "keyword.operator.spread.lhat",
+              "keyword.operator.spread.rhat"
+            ],
             "settings": {
               "foreground": "#C586C0",
               "fontStyle": "bold"
             }
           },
           {
-            "scope": "keyword.operator.word.rhat",
+            "scope": [
+              "keyword.operator.word.lhat",
+              "keyword.operator.word.rhat"
+            ],
             "settings": {
               "foreground": "#569BD2"
             }
           },
           {
             "scope": [
+              "keyword.operator.concat.lhat",
+              "keyword.operator.assignment.compound.lhat",
               "keyword.operator.assignment.compound.rhat",
               "keyword.operator.nil-assignment.rhat"
             ],
             "settings": {
               "foreground": "#D7BA7D",
               "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "storage.type.annotation.lhat",
+            "settings": {
+              "foreground": "#d8cd6d"
             }
           }
         ]

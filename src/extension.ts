@@ -5,6 +5,7 @@ import {
     CloseAction, ErrorAction, LanguageClient, LanguageClientOptions,
     ServerOptions,
 } from 'vscode-languageclient/node';
+import { registerHatDecoration } from './hatDecoration';
 import { isRhatSource, resolveServer, ServerSettings } from './server';
 
 class ServerController {
@@ -151,13 +152,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const output = vscode.window.createOutputChannel('R^ Language Server', { log: true });
     const server = new ServerController(context, output);
     controller = server;
+    registerHatDecoration(context, 'rhat', ['rhat']);
     context.subscriptions.push(
         output,
         vscode.commands.registerCommand('rhat.restartServer', () => server.restart()),
         vscode.commands.registerCommand('rhat.stopServer', () => server.stop()),
         vscode.commands.registerCommand('rhat.showOutput', () => output.show(true)),
         vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('rhat')) {
+            // The hat's opacity is the editor's, not the server's.
+            if (event.affectsConfiguration('rhat') &&
+                !event.affectsConfiguration('rhat.hatOpacity')) {
                 void server.restart();
             }
         }),
