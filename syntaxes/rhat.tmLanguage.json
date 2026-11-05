@@ -250,7 +250,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(and|or|fits|cross|dot|bitand|bitor|bitxor|bitshift|bitnot)(\\^(?!\\^))",
+          "match": "(?<![\\p{L}\\p{N}_])(and|or|fits|typeof|cross|dot|bitand|bitor|bitxor|bitshift|bitnot)(\\^(?!\\^))",
           "captures": {
             "1": {
               "name": "keyword.operator.word.rhat"
@@ -262,6 +262,17 @@
         },
         {
           "match": "(?<![\\p{L}\\p{N}_])(this|self|it)(\\^+)",
+          "captures": {
+            "1": {
+              "name": "variable.language.rhat"
+            },
+            "2": {
+              "name": "punctuation.definition.hat.rhat"
+            }
+          }
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(signature)(\\^(?!\\^))",
           "captures": {
             "1": {
               "name": "variable.language.rhat"

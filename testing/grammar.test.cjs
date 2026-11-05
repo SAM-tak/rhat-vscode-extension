@@ -70,6 +70,13 @@ test('clauses, template literals, outer receivers and lexical selectors use R^ s
     assert.deepEqual(scoped(result, 'variable.language.scope.rhat'), ['$^local']);
 });
 
+test('typeof^ is an operator word and the signature^ member a language variable', async () => {
+    const result = await tokens('print^(typeof^(x).signature^, i32^.signature^)');
+    assert.deepEqual(scoped(result, 'keyword.operator.word.rhat'), ['typeof']);
+    assert.deepEqual(scoped(result, 'variable.language.rhat'), ['signature', 'signature']);
+    assert.deepEqual(scoped(result, 'keyword.other.rhat'), ['print']);
+});
+
 test('L^-only constructs are not advertised as R^ keywords or types', async () => {
     const result = await tokens('require^ pack^ number^ any^ t^ error^ as^ yield^');
     assert.deepEqual(scoped(result, 'storage.type.rhat'), []);
