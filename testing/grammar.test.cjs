@@ -77,6 +77,11 @@ test('typeof^ is an operator word and the signature^ member a language variable'
     assert.deepEqual(scoped(result, 'keyword.other.rhat'), ['print']);
 });
 
+test('in^ is a control word like from^', async () => {
+    const result = await tokens('for^i in^0 .. 3 {}');
+    assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['for','in']);
+});
+
 test('L^-only constructs are not advertised as R^ keywords or types', async () => {
     const result = await tokens('require^ pack^ number^ any^ t^ error^ as^ yield^');
     assert.deepEqual(scoped(result, 'storage.type.rhat'), []);
