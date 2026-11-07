@@ -82,9 +82,11 @@ test('in^ is a control word like from^', async () => {
     assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['for','in']);
 });
 
-test('with^ is a control word like for^', async () => {
-    const result = await tokens('with^f = try^open() {}');
-    assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['with', 'try']);
+test('with^ and noncopy^ are not R^ keywords', async () => {
+    const result = await tokens('with^f = try^open() noncopy^def^N {}');
+    assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['try']);
+    assert.deepEqual(scoped(result, 'keyword.other.declaration.rhat'), ['def']);
+    assert.deepEqual(scoped(result, 'keyword.other.rhat'), ['with', 'noncopy']);
 });
 
 test('L^-only constructs are not advertised as R^ keywords or types', async () => {
@@ -132,6 +134,45 @@ test('escaped, raw, line strings and quoted identifiers retain their own lexical
     assert.deepEqual(scoped(result, 'invalid.illegal.escape.rhat'), []);
     assert.deepEqual(scoped(result, 'keyword.other.declaration.rhat'), ['let']);
     assert.deepEqual(scoped(await tokens('"\\q"'), 'invalid.illegal.escape.rhat'), ['\\q']);
+});
+
+const interpolated = 'string.quoted.double.interpolated.rhat';
+
+test('an interpolated string is a string from its $ on, and its holes are code', async () => {
+    const result = await tokens('$"a {x + 1} b" y');
+    assert.deepEqual(scoped(result, interpolated), ['$"', 'a ', ' b', '"']);
+    assert.deepEqual(scoped(result, 'keyword.operator.arithmetic.rhat'), ['+']);
+    assert.deepEqual(scoped(result, 'constant.numeric.integer.rhat'), ['1']);
+    assert.deepEqual(scoped(result, 'punctuation.section.interpolation.begin.rhat'), ['{']);
+    assert.deepEqual(scoped(result, 'punctuation.section.interpolation.end.rhat'), ['}']);
+    for (const token of result.filter(t => ['x ', 'x', ' y', 'y'].includes(t.text))) {
+        assert(!token.scopes.some(scope => scope.startsWith('string')), token.text);
+    }
+    assert.deepEqual(scoped(result, 'variable.language.scope.rhat'), []);
+});
+
+test('interpolation keeps doubled braces, escapes and formats, and nests', async () => {
+    const result = await tokens('$"{{a}} \\n \\q {n:04x} {f(x:1)} {H{a = 1}.a} {g("}")} {$"in {y}"}" z^');
+    assert.deepEqual(scoped(result, 'constant.character.escape.rhat'), ['{{', '}}', '\\n']);
+    assert.deepEqual(scoped(result, 'invalid.illegal.escape.rhat'), ['\\q']);
+    assert.deepEqual(scoped(result, 'constant.other.format.rhat'), [':04x']);
+    assert.deepEqual(scoped(result, 'punctuation.section.interpolation.begin.rhat').length, 6);
+    assert.deepEqual(scoped(result, 'punctuation.section.interpolation.end.rhat').length, 6);
+    assert.deepEqual(scoped(result, 'string.quoted.double.rhat'), ['"', '}', '"']);
+    assert.deepEqual(scoped(result, 'keyword.other.rhat'), ['z']);
+});
+
+test('an interpolated string spans lines, and code after it is code again', async () => {
+    const result = await tokens('$"one\ntwo {x}\nthree"\nlet^y = 1');
+    assert.deepEqual(scoped(result, interpolated), ['$"', 'one', 'two ', 'three', '"']);
+    assert.deepEqual(scoped(result, 'keyword.other.declaration.rhat'), ['let']);
+});
+
+test('$name is still a scope selector, and plain strings have no holes', async () => {
+    assert.deepEqual(scoped(await tokens('$name'), 'variable.language.scope.rhat'), ['$name']);
+    const plain = await tokens('"a {x}"');
+    assert.deepEqual(scoped(plain, 'punctuation.section.interpolation.begin.rhat'), []);
+    assert.deepEqual(scoped(plain, 'string.quoted.double.rhat').join(''), '"a {x}"');
 });
 
 test('numbers, array ranges, references and nil propagation do not inherit table operators', async () => {

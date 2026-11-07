@@ -57,6 +57,18 @@
       "name": "string.quoted.triple.rhat",
       "match": "\"\"\".*$"
     },
+    "string-escapes": {
+      "patterns": [
+        {
+          "match": "\\\\(n|r|t|0|\\\\|\"|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f]+\\}|\\n)",
+          "name": "constant.character.escape.rhat"
+        },
+        {
+          "match": "\\\\.",
+          "name": "invalid.illegal.escape.rhat"
+        }
+      ]
+    },
     "string-escaped": {
       "name": "string.quoted.double.rhat",
       "begin": "\"",
@@ -73,12 +85,133 @@
       },
       "patterns": [
         {
-          "match": "\\\\(n|r|t|0|\\\\|\"|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f]+\\}|\\n)",
-          "name": "constant.character.escape.rhat"
+          "include": "#string-escapes"
+        }
+      ]
+    },
+    "string-interpolated": {
+      "begin": "\\$\"",
+      "beginCaptures": {
+        "0": {
+          "name": "string.quoted.double.interpolated.rhat punctuation.definition.string.begin.rhat"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "string.quoted.double.interpolated.rhat punctuation.definition.string.end.rhat"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\{\\{|\\}\\}",
+          "name": "string.quoted.double.interpolated.rhat constant.character.escape.rhat"
         },
         {
-          "match": "\\\\.",
-          "name": "invalid.illegal.escape.rhat"
+          "include": "#interpolation-hole"
+        },
+        {
+          "include": "#string-escapes"
+        },
+        {
+          "match": "[^\"\\\\{}]+|\\}",
+          "name": "string.quoted.double.interpolated.rhat"
+        }
+      ]
+    },
+    "interpolation-hole": {
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.interpolation.begin.rhat"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.interpolation.end.rhat"
+        }
+      },
+      "patterns": [
+        {
+          "match": ":[^}\\n]*(?=\\})",
+          "name": "constant.other.format.rhat"
+        },
+        {
+          "include": "#interpolation-brackets"
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "interpolation-brackets": {
+      "patterns": [
+        {
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#interpolation-brackets"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "begin": "\\[",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#interpolation-brackets"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "begin": "\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.bracket.rhat"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#interpolation-brackets"
+            },
+            {
+              "include": "$self"
+            }
+          ]
         }
       ]
     },
@@ -130,6 +263,9 @@
       "patterns": [
         {
           "include": "#string-line"
+        },
+        {
+          "include": "#string-interpolated"
         },
         {
           "include": "#string-escaped"
