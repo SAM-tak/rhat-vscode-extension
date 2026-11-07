@@ -195,7 +195,7 @@
     "hat-identifiers": {
       "patterns": [
         {
-          "match": "(?<![\\p{L}\\p{N}_])(if|else|elseif|elsif|elif|ei|el|for|in|when|other|from|to|downto|step|while|until|next|skip|continue|repeat|do|break|return|try|catch|panic)(\\^+)",
+          "match": "(?<![\\p{L}\\p{N}_])(if|else|elseif|elsif|elif|ei|el|for|in|with|when|other|from|to|downto|step|while|until|next|skip|continue|repeat|do|break|return|try|catch|panic)(\\^+)",
           "captures": {
             "1": {
               "name": "keyword.control.rhat"

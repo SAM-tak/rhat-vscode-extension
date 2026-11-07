@@ -82,6 +82,11 @@ test('in^ is a control word like from^', async () => {
     assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['for','in']);
 });
 
+test('with^ is a control word like for^', async () => {
+    const result = await tokens('with^f = try^open() {}');
+    assert.deepEqual(scoped(result, 'keyword.control.rhat'), ['with', 'try']);
+});
+
 test('L^-only constructs are not advertised as R^ keywords or types', async () => {
     const result = await tokens('require^ pack^ number^ any^ t^ error^ as^ yield^');
     assert.deepEqual(scoped(result, 'storage.type.rhat'), []);
