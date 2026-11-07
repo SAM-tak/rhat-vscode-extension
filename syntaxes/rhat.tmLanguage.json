@@ -195,7 +195,7 @@
     "hat-identifiers": {
       "patterns": [
         {
-          "match": "(?<![\\p{L}\\p{N}_])(if|else|elseif|elsif|elif|ei|el|for|in|with|when|other|from|to|downto|step|while|until|next|skip|continue|repeat|do|break|return|try|catch|panic)(\\^+)",
+          "match": "(?<![\\p{L}\\p{N}_])(if|else|elseif|elsif|elif|ei|el|for|in|when|other|from|to|downto|step|while|until|next|skip|continue|repeat|do|break|return|try|catch|panic)(\\^+)",
           "captures": {
             "1": {
               "name": "keyword.control.rhat"
@@ -206,7 +206,7 @@
           }
         },
         {
-          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|enum|externC|externLLVM|includeC|exportC|exportL|dyn|module|import|public|private|template|override|overload|abstract|mutable|noncopy)(\\^+)",
+          "match": "(?<![\\p{L}\\p{N}_])(var|let|f|p|def|errordef|enum|externC|externLLVM|includeC|exportC|exportL|dyn|module|import|public|private|template|override|overload|abstract|mutable)(\\^+)",
           "captures": {
             "1": {
               "name": "keyword.other.declaration.rhat"
