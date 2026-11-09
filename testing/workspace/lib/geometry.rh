@@ -2,7 +2,7 @@ module^lib.geometry
 
 public^def^Point {
     self^{ x:i64^= 0, y:i64^= 0 }
-    squaredLength = f^self^ {
+    squaredLength = f^self^{
         self^.x * self^.x + self^.y * self^.y
     }
 }

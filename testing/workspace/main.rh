@@ -7,16 +7,16 @@ print^point.squaredLength()
 
 # Body-derived parameter inference is shown by the language server.
 let^twice = f^value {
-    let^typed:i64^ = value
+    let^typed:i64^= value
     return^typed * 2
 }
 print^twice(21)
 
-var^values = i64^[grow^]
+var^values = i64^[grow^]{}
 values.push(3)
 print^(values.len, values[2])
 
-let^optional:geometry.Point|nil^ = point
+let^optional:geometry.Point|nil^= point
 if^optional? {
     print^optional.x
 else^:
