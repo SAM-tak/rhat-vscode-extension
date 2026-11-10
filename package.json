@@ -3,7 +3,7 @@
   "displayName": "R^ (Rhat) Language Support",
   "description": "Language support for R^, powered by the native rhat language server (rhat lsp).",
   "icon": "./images/rhat-logo.png",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "publisher": "SAMtak",
   "license": "Apache-2.0",
   "repository": {
