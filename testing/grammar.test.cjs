@@ -26,6 +26,28 @@ async function tokens(source) {
 }
 const scoped = (tokens, scope) => tokens.filter(t => t.scopes.includes(scope)).map(t => t.text);
 
+test('numeric type suffixes remain part of the numeric token', async () => {
+    const cases = {
+        hex: ['0x8888_4444u32', '0xff_u8', '0x7fi16', '0xff_f32'],
+        binary: ['0b1100_1111_0000_1111u16', '0b10_i32'],
+        octal: ['0o77u64', '0o7_i8'],
+        integer: ['123u128', '123_i64', '42', '1_000'],
+        float: ['1.2f32', '1.2_f64', '2f64', '2_f16', '1e3_f32', '1.25e-3f8'],
+    };
+    for (const [kind, literals] of Object.entries(cases)) {
+        const result = await tokens(literals.join(' '));
+        assert.deepEqual(scoped(result, `constant.numeric.${kind}.rhat`), literals);
+    }
+    for (const width of [8, 16, 32, 64, 128]) {
+        for (const sign of ['i', 'u']) {
+            const literal = `1${sign}${width}`;
+            assert.deepEqual(scoped(await tokens(literal), 'constant.numeric.integer.rhat'), [literal]);
+        }
+    }
+    const invalid = await tokens('123u 123ull value123u64');
+    assert(!invalid.some(t => t.scopes.some(s => s.startsWith('constant.numeric.'))));
+});
+
 test('cross and dot aliases retain operator scopes with or without whitespace', async () => {
     for (const source of ['n.delta×(p-n.origin) 左⋅右', 'n.delta × (p-n.origin) 左 ⋅ 右']) {
         const result = await tokens(source);
