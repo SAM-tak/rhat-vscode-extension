@@ -49,7 +49,7 @@
         ],
         "icon": {
           "light": "./images/rhat-logo-small.svg",
-          "dark": "./images/rhat-logo-small.svg"
+          "dark": "./images/rhat-logo-small-dark.svg"
         },
         "configuration": "./language-configuration.json"
       }
